@@ -13,7 +13,7 @@ var request = require("request");
 
 var Note = require("./models/Note");
 var Article = require("./models/Article");
-var databaseUrl = 'mongodb://localhost/scrap';
+var databaseUrl = '';
 
 if (process.env.MONGODB_URI) {
 	mongoose.connect(process.env.MONGODB_URI);
@@ -55,7 +55,7 @@ app.listen(port, function() {
 app.get("/", function(req, res) {
 	Article.find({}, null, {sort: {created: -1}}, function(err, data) {
 		if(data.length === 0) {
-			res.render("placeholder", {message: "There's nothing scraped yet. Please click \"Scrape For Newest Articles\" for fresh and delicious news."});
+			res.render("placeholder", {message: "There's nothing scraped yet. Please click  for news"});
 		}
 		else{
 			res.render("index", {articles: data});
@@ -64,7 +64,7 @@ app.get("/", function(req, res) {
 });
 
 app.get("/scrape", function(req, res) {
-	request("https://www.nytimes.com/section/world", function(error, response, html) {
+	request("https://www.bloomberg.com", function(error, response, html) {
 		var $ = cheerio.load(html);
 		var result = {};
 		$("div.story-body").each(function(i, element) {
@@ -100,7 +100,7 @@ app.get("/scrape", function(req, res) {
 app.get("/saved", function(req, res) {
 	Article.find({issaved: true}, null, {sort: {created: -1}}, function(err, data) {
 		if(data.length === 0) {
-			res.render("placeholder", {message: "You have not saved any articles yet. Try to save some delicious news by simply clicking \"Save Article\"!"});
+			res.render("placeholder", {message: "You have not saved any articles yet. Click \"Save Article\"!"});
 		}
 		else {
 			res.render("saved", {saved: data});
